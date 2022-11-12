@@ -1,0 +1,103 @@
+﻿@page
+@using FoodDeliveryApp.Data.Model
+@using Humanizer
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Home page";
+}
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<style>
+    input[type=number]::-webkit-inner-spin-button {
+        opacity: 1
+    }
+</style>
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript">
+    'use strict'
+    $(function () {
+
+
+        $("#orderbtn").on('click',  function () {
+
+            var inputElements = $(':input[type="number"]');
+            if (!inputElements.length || inputElements.length < 0) {
+                alert("Nothing to buy :(");
+                return;
+            }
+            var obj = {};
+            obj.Items = inputElements.map((c,a) =>{
+                var ob = {};
+                ob.ItemId = $(a).attr('id');
+                ob.Quantity= a.value;
+                return ob;
+            }).get().filter((e) =>e.Quantity>0);
+            if (!obj.Items||obj.Items.length==0) {
+                alert("You have to buy somthing !");
+                return;
+            }
+            $.ajax({
+                url: '/Order/Create',
+                data: JSON.stringify(obj),
+                type: 'POST',
+                dataType: 'html',
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    $(':input[type="number"]').each(function () {
+                        $(this).val("0");
+                    });
+
+                    alert("Order on its way");
+                }, 
+                error: function (error) {
+                    alert('error; ' + error);
+                   }
+            });
+        });
+    });
+</script>
+
+<div class="text-center  ">
+    <h4 class="display-4">Easy peasy</h4>
+    @if (!SignInManager.IsSignedIn(User)) 
+    {
+        <h1 class="display-4 m-5">Just start ordering</h1>
+    }else{
+
+        <h6 class="display-6">Choose how much and order away</h6>
+        <button id="orderbtn" class="btn btn-success m-5 ">Press here to order</button>
+    }
+    <div class="container text-center">
+        <div class="row gy-5  ">
+            @if (Model.Items != null)
+            {
+                @foreach (var item in Model.Items)
+                {
+
+                    <div class="container-fluid col-10 col-md-3 col-sm-4">
+
+                        <div class="card">
+
+                            <img src="@item.PictureUrl" class="card-img-top" alt="@item.Name"> 
+                            <div class="card-body">
+                                <h5 class="card-title">@item.Name</h5>
+                                <p class="card-text">@item.Price.ToString("C")</p>
+                                <p class="card-text"><small class="text-muted">@item.CreationDate.Humanize()</small></p>
+                                @if (SignInManager.IsSignedIn(User))
+                                {
+                                    <div container-fluid>
+                                        <input class="form-control text-center" type="number" id="@item.Id" value="0" min="0" step="1" />
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            }else{
+                <h6>No items :(</h6>
+            }
+        </div>
+    </div>
+   
+</div>

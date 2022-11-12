@@ -1,0 +1,18 @@
+﻿@using FoodDeliveryApp.Data.Model
+@inject SignInManager<ApplicationUser> SignInManager
+@{
+    var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
+}
+<ul class="nav nav-pills flex-column">
+    @*<li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" href="/Identity/Account/Manage/Index">Profile</a></li>*@
+    <li class="nav-item"><a class="nav-link @ManageNavPages.OrdersNavClass(ViewContext)" id="orders" href="/Identity/Account/Manage/Orders/Index">Orders</a></li>
+    <li class="nav-item"><a class="nav-link @ManageNavPages.ItemsNavClass(ViewContext)" id="items" href="/Identity/Account/Manage/Items/Index">Products</a></li>
+    @*<li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" href="/Identity/Account/Manage/Email">Email</a></li>*@
+    @*<li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" href="/Identity/Account/Manage/ChangePassword">Password</a></li>*@
+    @if (hasExternalLogins)
+    {
+        <li id="external-logins" class="nav-item"><a id="external-login" class="nav-link @ManageNavPages.ExternalLoginsNavClass(ViewContext)" asp-page="./ExternalLogins">External logins</a></li>
+    }
+    @*<li class="nav-item"><a class="nav-link @ManageNavPages.TwoFactorAuthenticationNavClass(ViewContext)" id="two-factor" asp-page="./TwoFactorAuthentication">Two-factor authentication</a></li>*@
+    @*<li class="nav-item"><a class="nav-link @ManageNavPages.PersonalDataNavClass(ViewContext)" id="personal-data" href="/Identity/Account/Manage/PersonalData">Personal data</a></li>*@
+</ul>

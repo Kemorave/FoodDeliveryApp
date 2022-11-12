@@ -1,0 +1,130 @@
+﻿@page
+@using Humanizer
+@using X.PagedList.Mvc.Core;
+@using X.PagedList.Web.Common
+@model FoodDeliveryApp.Areas.Identity.Pages.Account.Manage.Orders.IndexModel
+@{
+    ViewData["Title"] = "Orders";
+    ViewData["ActivePage"] = ManageNavPages.Orders;
+}  
+     <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <script type="text/javascript">
+        $(function () {
+
+        $("#filterList").on('change', function () {
+            if(this.value =="Filter by reference")
+
+                $("tr").show();
+                else
+                {
+
+                $("#"+ this.value).show();
+
+                $("tr:not(#" + this.value + ")").not(':first').hide();
+                }
+
+        });
+            $("body").on('click', '#btnShow', function () {
+                $("#MyPopup").modal("hide");
+                var obj = {};
+                obj.Id = $(this).attr('data-id');
+
+                $.ajax({
+                    url: '/Order/Details',
+                    data: JSON.stringify(obj),
+                    type: 'POST',
+                    dataType: 'html',
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        $("#dvPartial").html(response);
+                        $("#MyPopup").modal("show");
+                    }
+                });
+            });
+        });
+    </script>  
+   
+   <select class="form-select-sm" id="filterList">
+
+    <option>Filter by reference</option>
+    @foreach (var item in Model.PagedResult)
+    {
+        <option value="@(item.Id+"oi")">@item.Id</option>
+    }
+
+   </select>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Refrence
+            </th>
+            <th>
+                Total 
+            </th>
+            <th>
+                 Date 
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.PagedResult)
+        {
+            <tr id="@(item.Id+"oi")">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @item.TotalPrice.ToString("C")
+                </td>
+                <td>
+                    @item.CreationDate.ToShortDateString()   (@item.CreationDate.Humanize())
+                </td>
+                <td>
+                    <a id="btnShow" class="btn btn-primary btn-sm" data-id="@item.Id">Details</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+<div id="container" style="margin-left: 20px">
+
+        @Html.PagedListPager( Model.PagedResult, PageNumber => Url.Page("Index", new { PageNumber }), new PagedListRenderOptions()
+        {
+        ActiveLiElementClass = "active",
+        PageClasses = new[]{ "page-link"},
+        LiElementClasses=new[] { "page-item" },
+        UlElementClasses = new[] { "pagination","justify-content-center", "mt-3" },
+        LinkToNextPageFormat = "Next",
+        LinkToPreviousPageFormat = "Previous",
+        MaximumPageNumbersToDisplay = 5,
+        DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+        DisplayLinkToNextPage = PagedListDisplayMode.Always
+        } )
+    </div>
+
+
+<div id="MyPopup" class="modal fade " role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-bs-dismiss="modal">
+                        &times;
+                    </button>
+                    <h4 class="modal-title"></h4>
+                </div>
+                <div class="modal-body">
+                    <div id="dvPartial"></div>
+                </div>
+                <div class="modal-footer">
+                    <input type="button" id="btnClosePopup" value="Close" data-bs-dismiss="modal" class="btn btn-danger" />
+                </div>
+            </div>
+        </div>
+    </div> 

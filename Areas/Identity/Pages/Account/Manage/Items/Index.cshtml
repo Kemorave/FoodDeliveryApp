@@ -1,0 +1,51 @@
+﻿@page
+@model FoodDeliveryApp.Areas.Identity.Pages.Account.Manage.Items.IndexModel
+@{
+    ViewData["Title"] = "Products";
+    ViewData["ActivePage"] = ManageNavPages.Items;
+}
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                 Picture Url 
+            </th>
+            <th>
+               Name 
+            </th>
+            <th>
+                 Price 
+            </th> 
+            <th>
+               Creation Date 
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Items) {
+        <tr>
+                <td>
+                    <img src="@item.PictureUrl" style="max-height:200px;object-fit:cover" class="card-img-top" alt="@item.Name">
+                </td>
+                <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @item.Price.ToString("C")
+            </td>
+            
+            <td>
+                @Html.DisplayFor(modelItem => item.CreationDate)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> | 
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

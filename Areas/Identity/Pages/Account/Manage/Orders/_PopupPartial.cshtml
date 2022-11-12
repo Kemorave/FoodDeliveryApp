@@ -1,0 +1,68 @@
+﻿@using FoodDeliveryApp.Data.Model 
+@model Order
+
+<div class="container">
+    <h4>Order Details</h4>
+    <hr />
+    <div class="row">
+        <div class="container-fluid">
+            <form asp-action="Create" asp-controller="Home">
+                <div class="form-group">
+                    <label class="control-label">Refrence</label>
+                    <input asp-for="Id" class="form-control" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Total</label>
+                    <input value="@Model.TotalPrice.ToString("C")" class="form-control" readonly="readonly" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Date</label>
+                    <input asp-for="CreationDate" class="form-control" readonly="readonly" />
+                </div>
+                  @if (Model.OrderItems?.Count>0)
+                {
+                   
+                    <table class="table  mt-5">
+                    <thead>
+                        <tr>
+                            <th>
+                                Name
+                                @*@Html.DisplayNameFor(model => model.OrderItems.FirstOrDefault().ItemName)*@
+                            </th>
+                            <th>
+                                Total
+                                @*@Html.DisplayNameFor(model => model.OrderItems.FirstOrDefault().TotalPrice)*@
+                            </th>
+                            <th>
+                                Quantity
+                                @*@Html.DisplayNameFor(model => model.OrderItems.FirstOrDefault().Quantity)*@
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr >
+                                <td>
+                                    @item.ItemName
+                                </td>
+                                <td>
+                                    @item.TotalPrice.ToString("C") 
+                                </td>
+                                <td>
+                                    @item.Quantity
+                                </td>
+                               
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+                }
+
+            </form>
+        </div>
+    </div>
+</div>
